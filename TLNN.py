@@ -118,9 +118,9 @@ class TLNN(object):
     def __init__(self, layer_1_units = 4, layer_2_units = 4, bias= True):
         self.layers = OrderedDict()
         self.layers['linear_1'] = Linear(2,layer_1_units,bias=bias)
-        self.layers['sigmoid_1'] = Sigmoid()
+        #self.layers['sigmoid_1'] = Sigmoid()
         self.layers['linear_2'] = Linear(layer_1_units,layer_2_units,bias=bias)
-        self.layers['sigmoid_2'] = Sigmoid()
+        #self.layers['sigmoid_2'] = Sigmoid()
         self.layers['output'] = Linear(layer_2_units,1,bias = False)
         self.layers['sigmoid_3'] = Sigmoid()
         

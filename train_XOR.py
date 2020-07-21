@@ -7,7 +7,7 @@ if __name__ == '__main__':
     num_epochs = 500000
     #num_epochs = 10000
     batch_size= 5
-    print_freq = 50
+    print_freq = 500
     lr=0.01
     plot_loss_freq=200
     
