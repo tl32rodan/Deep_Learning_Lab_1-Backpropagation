@@ -1,2 +1,2 @@
 # Deep_Learning_Lab_1-Backpropagation
-研究所課程
+https://hackmd.io/i9wkp1OZSsamwb7hJuO44w
