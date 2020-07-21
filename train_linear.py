@@ -22,4 +22,8 @@ if __name__ == '__main__':
     acc(data_y,pred_y)
     
     # loss/epoch curve
-    sns.relplot(x="epochs", y="loss", kind='line' ,data=pd.DataFrame(loss_list))
+    plr.figure()
+    plt.xlabel('epochs')
+    plt.ylabel('loss')
+    plt.plot(loss_list['epochs'],loss_list['loss'])
+    plt.savefig('result_train_XOR.png')

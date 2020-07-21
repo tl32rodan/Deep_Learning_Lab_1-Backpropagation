@@ -81,7 +81,7 @@ class MSE(Layer):
     def forward(self, y, ground_truth):
         self.y = y
         self.ground_truth = ground_truth
-        return np.mean((self.y-self.ground_truth)**2)        
+        return -np.sum((self.y-self.ground_truth)**2)
     
     def backward(self,prev_grad=1,lr=0.1):
         '''
@@ -89,16 +89,40 @@ class MSE(Layer):
         '''
         return (2/self.y.shape[0])*(self.y-self.ground_truth)
     
+class Cross_Entropy(Layer):    
+    def __init__(self):
+        self.y = None
+        self.ground_truth = None
+    
+    def forward(self, y, ground_truth):
+        if y.ndim == 1:
+            ground_truth = ground_truth.reshape(1, ground_truth.size)
+            y = y.reshape(1, y.size)
+            
+        batch_size = y.shape[0]
+        self.y = y
+        self.ground_truth = ground_truth
+        delta = 1e-7 # To avoid -inf
+        return -np.sum(self.ground_truth - np.log2(self.y + delta)) / batch_size
+    
+    def backward(self,prev_grad=1,lr=0.1):
+        '''
+            prev_grad, lr: pseudo parameters
+        '''
+        batch_size = self.ground_truth.shape[0]
+        dx = (self.y - self.ground_truth) / batch_size
+        return dx
+    
     
 class TLNN(object):
-    def __init__(self):
+    def __init__(self, layer_1_units = 4, layer_2_units = 4, bias= True):
         self.layers = OrderedDict()
-        self.layers['linear_1'] = Linear(2,4,bias=True)
-        self.layers['sigmoid_1'] = Sigmoid()
-        self.layers['linear_2'] = Linear(4,4,bias=True)
-        self.layers['sigmoid_2'] = Sigmoid()
-        self.layers['output'] = Linear(4,1,bias = False)
-        self.layers['sigmoid_3'] = Sigmoid()
+        self.layers['linear_1'] = Linear(2,layer_1_units,bias=bias)
+        #self.layers['sigmoid_1'] = Sigmoid()
+        self.layers['linear_2'] = Linear(layer_1_units,layer_2_units,bias=bias)
+        #self.layers['sigmoid_2'] = Sigmoid()
+        self.layers['output'] = Linear(layer_2_units,1,bias = False)
+        #self.layers['sigmoid_3'] = Sigmoid()
         
         self.loss_func = MSE()
         

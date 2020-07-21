@@ -5,12 +5,13 @@ if __name__ == '__main__':
     # XOR data
     data_x, data_y = generate_XOR_easy()
     num_epochs = 500000
-    batch_size=20
-    print_freq = 50000
-    lr=0.025
+    #num_epochs = 10000
+    batch_size= 5
+    print_freq = 50
+    lr=0.01
     plot_loss_freq=200
     
-    pred_y, loss_list = run_Net(data_x,data_y,num_epochs, batch_size, print_freq, lr, plot_loss_freq)
+    pred_y, loss_list = run_Net(data_x,data_y,num_epochs, batch_size, print_freq, lr, plot_loss_freq,layer_1_units = 6, layer_2_units = 4)
     
     # Comparison graph
     show_result(data_x,data_y,pred_y)
@@ -21,4 +22,8 @@ if __name__ == '__main__':
     acc(data_y,pred_y)
     
     # loss/epoch curve
-    sns.relplot(x="epochs", y="loss", kind='line' ,data=pd.DataFrame(loss_list))
+    plt.figure()
+    plt.xlabel('epochs')
+    plt.ylabel('loss')
+    plt.plot(loss_list['epochs'],loss_list['loss'])
+    plt.savefig('result_train_XOR.png')
