@@ -7,11 +7,11 @@ if __name__ == '__main__':
     num_epochs = 500000
     #num_epochs = 10000
     batch_size= 5
-    print_freq = 500
+    print_freq = 10000
     lr=0.01
     plot_loss_freq=200
     
-    pred_y, loss_list = run_Net(data_x,data_y,num_epochs, batch_size, print_freq, lr, plot_loss_freq,layer_1_units = 6, layer_2_units = 4)
+    pred_y, loss_list = run_Net(data_x,data_y,num_epochs, batch_size, print_freq, lr, plot_loss_freq,layer_1_units = 4, layer_2_units = 4)
     
     # Comparison graph
     show_result(data_x,data_y,pred_y)

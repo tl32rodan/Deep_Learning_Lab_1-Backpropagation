@@ -89,12 +89,13 @@ class MSE(Layer):
         '''
         return (2/self.y.shape[0])*(self.y-self.ground_truth)
     
-class Cross_Entropy(Layer):    
+class Binary_Cross_Entropy(Layer):    
     def __init__(self):
         self.y = None
         self.ground_truth = None
     
     def forward(self, y, ground_truth):
+        # 使此 function 可以處理 batch ,也可以處理 single data
         if y.ndim == 1:
             ground_truth = ground_truth.reshape(1, ground_truth.size)
             y = y.reshape(1, y.size)
@@ -102,15 +103,16 @@ class Cross_Entropy(Layer):
         batch_size = y.shape[0]
         self.y = y
         self.ground_truth = ground_truth
-        delta = 1e-7 # To avoid -inf
-        return -np.sum(self.ground_truth - np.log2(self.y + delta)) / batch_size
+        # To avoid -inf; 重要！！
+        delta = 1e-7 
+        return -np.sum(self.ground_truth * np.log2(self.y + delta) + (1-self.ground_truth)* np.log2(1- self.y + delta)) / batch_size
     
     def backward(self,prev_grad=1,lr=0.1):
         '''
             prev_grad, lr: pseudo parameters
         '''
-        batch_size = self.ground_truth.shape[0]
-        dx = (self.y - self.ground_truth) / batch_size
+        batch_size = self.y.shape[0]
+        dx = (self.y - self.ground_truth) / (self.y * (1 - self.y) * batch_size)
         return dx
     
     
@@ -118,13 +120,13 @@ class TLNN(object):
     def __init__(self, layer_1_units = 4, layer_2_units = 4, bias= True):
         self.layers = OrderedDict()
         self.layers['linear_1'] = Linear(2,layer_1_units,bias=bias)
-        #self.layers['sigmoid_1'] = Sigmoid()
+        self.layers['sigmoid_1'] = Sigmoid()
         self.layers['linear_2'] = Linear(layer_1_units,layer_2_units,bias=bias)
-        #self.layers['sigmoid_2'] = Sigmoid()
+        self.layers['sigmoid_2'] = Sigmoid()
         self.layers['output'] = Linear(layer_2_units,1,bias = False)
         self.layers['sigmoid_3'] = Sigmoid()
         
-        self.loss_func = MSE()
+        self.loss_func = Binary_Cross_Entropy()
         
     def forward(self, x):
         for layer in self.layers.values():
