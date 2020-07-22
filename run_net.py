@@ -10,8 +10,9 @@ sns.set(style="darkgrid")
 def acc(ground_truth, y):
     print ('Accuracy = ',100* (ground_truth[ground_truth==y].size / ground_truth.size) , '%')
 
-def run_Net(data_x, data_y, num_epochs = 10000, batch_size=20, print_freq = 1000, lr=0.05, plot_loss_freq=10, enable_loss_msg = True, layer_1_units = 4, layer_2_units = 4):
-    net = TLNN(layer_1_units, layer_2_units)
+def run_Net(data_x, data_y, num_epochs = 10000, batch_size=20, print_freq = 1000, lr=0.05, plot_loss_freq=10, enable_loss_msg = True, layer_1_units = 4, layer_2_units = 4, act_f = 'sigmoid', loss_f = 'mse'):
+    
+    net = TLNN(layer_1_units, layer_2_units,act_f = act_f, loss_f = loss_f)
     data_size = data_x.shape[0]
     iter_per_epoch = max(round(data_size/batch_size), 1)
     

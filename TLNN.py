@@ -120,35 +120,44 @@ class Binary_Cross_Entropy(Layer):
         batch_size = y.shape[0]
         self.y = y
         self.ground_truth = ground_truth
+        
         # To avoid -inf; 重要！！
         delta = 1e-7 
         
-        return -np.sum(self.ground_truth * np.log2(self.y + delta) + (1-self.ground_truth) * np.log2(1 - self.y + delta) ) / batch_size
+        return (-1/ batch_size)*np.sum(self.ground_truth * np.log2(self.y + delta) + (1-self.ground_truth) * np.log2(1 - self.y + delta))
     
     def backward(self,prev_grad=1,lr=0.1):
         '''
             prev_grad, lr: pseudo parameters
         '''
         batch_size = self.y.shape[0]
-        dx = - (np.divide(self.ground_truth, self.y) - np.divide(1 - self.ground_truth, 1 - self.y))
+        
+        # To avoid -inf; 
+        delta = 1e-7 
+        dx = - (np.divide(self.ground_truth, self.y + delta) - np.divide(1 - self.ground_truth, 1 - self.y + delta))
         return dx
     
     
 class TLNN(object):
-    def __init__(self, layer_1_units = 4, layer_2_units = 4, bias= True):
+    def __init__(self, layer_1_units = 4, layer_2_units = 4, bias= True, act_f = 'sigmoid', loss_f = 'mse'):
+        act_f_list = {'sigmoid':Sigmoid,
+                     'relu': ReLU}
+        
+        loss_f_list = {'mse':MSE,
+                      'bce':Binary_Cross_Entropy}
+        
         self.layers = OrderedDict()
         self.layers['linear_1'] = Linear(2,layer_1_units,bias=bias)
-        #self.layers['ReLU_1'] = ReLU()
-        self.layers['sigmoid_1'] = Sigmoid()
+        self.layers[str(act_f_list[act_f])+'_1'] = act_f_list[act_f]()
+        #elf.layers['sigmoid_1'] = Sigmoid()
         self.layers['linear_2'] = Linear(layer_1_units,layer_2_units,bias=bias)
-        #self.layers['ReLU_2'] = ReLU()
-        self.layers['sigmoid_2'] = Sigmoid()
+        self.layers[str(act_f_list[act_f])+'_2'] = act_f_list[act_f]()
+        #elf.layers['sigmoid_2'] = Sigmoid()
         self.layers['output'] = Linear(layer_2_units,1,bias = False)
-        #self.layers['ReLU_3'] = ReLU()
         self.layers['sigmoid_3'] = Sigmoid()
         
-        self.loss_func = Binary_Cross_Entropy()
-        #self.loss_func = MSE()
+        #self.loss_func = Binary_Cross_Entropy()
+        self.loss_func = loss_f_list[loss_f]()
         
     def forward(self, x):
         for layer in self.layers.values():
