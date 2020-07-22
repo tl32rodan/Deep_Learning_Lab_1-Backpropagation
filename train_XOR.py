@@ -20,7 +20,7 @@ if __name__ == '__main__':
     pred_y[pred_y>0.5] = 1
     pred_y[pred_y<0.5] = 0
     acc(data_y,pred_y)
-    
+     
     # loss/epoch curve
     plt.figure()
     plt.xlabel('epochs')
