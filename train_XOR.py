@@ -4,16 +4,17 @@ from run_net import *
 if __name__ == '__main__':
     # XOR data
     data_x, data_y = generate_XOR_easy()
-    num_epochs = 500000
+    num_epochs = 100000
     #num_epochs = 10000
-    batch_size= 5
-    print_freq = 10000
+    batch_size= 21
+    print_freq = 1000
     lr=0.01
     plot_loss_freq=200
     
     pred_y, loss_list = run_Net(data_x,data_y,num_epochs, batch_size, print_freq, lr, plot_loss_freq,layer_1_units = 4, \
                                 layer_2_units = 4, act_f = 'sigmoid', loss_f = 'mse')
     
+    print('pred_y = ',pred_y )
     # Comparison graph
     show_result(data_x,data_y,pred_y)
     
