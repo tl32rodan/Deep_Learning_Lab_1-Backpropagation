@@ -11,8 +11,8 @@ if __name__ == '__main__':
     batch_size= 21
     print_freq = 1000
     
-    lr=0.001490626
-    #lr=0.001490625
+    #lr=0.001490626
+    lr=0.001490625
     plot_loss_freq=200
     
     pred_y, loss_list = run_Net(data_x,data_y,num_epochs, batch_size, print_freq, lr, plot_loss_freq,layer_1_units = 4, layer_2_units = 4, act_f = 'relu', loss_f = 'bce')
