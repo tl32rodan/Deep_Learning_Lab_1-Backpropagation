@@ -6,7 +6,7 @@ if __name__ == '__main__':
     data_x, data_y = generate_linear(n=100)
     
     num_epochs = 10000
-    batch_size=20
+    batch_size=100
     print_freq = 1000
     lr=0.1
     plot_loss_freq=10
