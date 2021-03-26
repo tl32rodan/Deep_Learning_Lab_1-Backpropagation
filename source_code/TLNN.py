@@ -105,6 +105,22 @@ class MSE(Layer):
             prev_grad, lr: pseudo parameters
         '''
         return (2/self.y.shape[0])*(self.y-self.ground_truth)
+class MAE(Layer):
+    def __init__(self):
+        self.y = None
+        self.ground_truth = None
+    
+    def forward(self, y, ground_truth):
+        self.y = y
+        self.ground_truth = ground_truth
+        return np.mean(self.y-self.ground_truth)
+    
+    def backward(self,prev_grad=1,lr=0.1):
+        '''
+            prev_grad, lr: pseudo parameters
+        '''
+        
+        return (1/self.y.shape[0])*np.sign(self.y-self.ground_truth)
     
 class Binary_Cross_Entropy(Layer):    
     def __init__(self):
@@ -155,6 +171,35 @@ class TLNN(object):
         #elf.layers['sigmoid_2'] = Sigmoid()
         self.layers['output'] = Linear(layer_2_units,1,bias = False)
         self.layers['sigmoid_3'] = Sigmoid()
+        
+        #self.loss_func = Binary_Cross_Entropy()
+        self.loss_func = loss_f_list[loss_f]()
+        
+    def forward(self, x):
+        for layer in self.layers.values():
+            x = layer.forward(x)
+        return x
+    
+    def cal_loss(self, y, ground_truth):
+        return self.loss_func.forward(y,ground_truth)
+    
+    def backward(self,lr=0.05):
+        dy = self.loss_func.backward()
+        
+        # Reverse the layers list for easily conducting backward
+        back_layers = list(self.layers.values())
+        back_layers.reverse()
+        for layer in back_layers:
+            dy = layer.backward(dy,lr=lr)
+            
+class LinearRegressionNN(object):
+    def __init__(self, num_hidden_units = 2, bias=True, loss_f = 'mse'):        
+        loss_f_list = {'mse':MSE,
+                      'mae':MAE}
+        
+        self.layers = OrderedDict()
+        self.layers['hidden'] = Linear(1,num_hidden_units,bias=bias)
+        self.layers['output'] = Linear(num_hidden_units,1,bias = False)
         
         #self.loss_func = Binary_Cross_Entropy()
         self.loss_func = loss_f_list[loss_f]()
